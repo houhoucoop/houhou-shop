@@ -7,25 +7,16 @@ import { z } from 'zod';
 import { columns } from './components/columns';
 import { DataTable } from './components/data-table';
 import { taskSchema } from './data/schema';
+import prisma from '../../lib/db';
 
 export const metadata: Metadata = {
   title: 'Tasks',
   description: 'A task and issue tracker build using Tanstack Table.',
 };
 
-// Simulate a database read for tasks.
-async function getTasks() {
-  const data = await fs.readFile(
-    path.join(process.cwd(), 'app/tasks/data/tasks.json'),
-  );
-
-  const tasks = JSON.parse(data.toString());
-
-  return z.array(taskSchema).parse(tasks);
-}
-
 export default async function TaskPage() {
-  const tasks = await getTasks();
+  const data = await prisma.tasks.findMany();
+  const tasks = z.array(taskSchema).parse(data);
 
   return (
     <>
