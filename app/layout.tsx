@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import PageHeader from '@/components/page-header';
 import PageFooter from '@/components/page-footer';
+import { ApolloWrapper } from '@/components/apollo-wrapper';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -21,9 +22,11 @@ export default function RootLayout({
       <body
         className={`${inter.className} min-h-screen bg-background font-sans`}
       >
-        <PageHeader />
-        <div className="container max-w-screen-2xl">{children}</div>
-        <PageFooter />
+        <ApolloWrapper>
+          <PageHeader />
+          <div className="container max-w-screen-2xl">{children}</div>
+          <PageFooter />
+        </ApolloWrapper>
       </body>
     </html>
   );
