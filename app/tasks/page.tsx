@@ -1,23 +1,14 @@
-import { promises as fs } from 'fs';
-import path from 'path';
 import { Metadata } from 'next';
 import Image from 'next/image';
-import { z } from 'zod';
 
-import { columns } from './components/columns';
 import { DataTable } from './components/data-table';
-import { taskSchema } from './data/schema';
-import prisma from '../../lib/db';
 
 export const metadata: Metadata = {
   title: 'Tasks',
   description: 'A task and issue tracker build using Tanstack Table.',
 };
 
-export default async function TaskPage() {
-  const data = await prisma.tasks.findMany();
-  const tasks = z.array(taskSchema).parse(data);
-
+export default function TaskPage() {
   return (
     <>
       <div className="md:hidden">
@@ -45,7 +36,7 @@ export default async function TaskPage() {
             </p>
           </div>
         </div>
-        <DataTable data={tasks} columns={columns} />
+        <DataTable />
       </div>
     </>
   );
