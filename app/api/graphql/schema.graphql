@@ -1,0 +1,28 @@
+enum Order {
+  asc
+  desc
+}
+
+enum Sort {
+  id
+  priority
+  status
+  title
+}
+
+type Task {
+  id: String!
+  title: String!
+  status: String!
+  label: String!
+  priority: String!
+}
+
+type TaskResponse {
+  items: [Task!]!
+  totalCount: Int!
+}
+
+type Query {
+  tasks(limit: Int, offset: Int, sort: Sort, order: Order): TaskResponse!
+}

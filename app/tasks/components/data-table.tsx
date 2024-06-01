@@ -15,7 +15,6 @@ import {
   PaginationState,
 } from '@tanstack/react-table';
 import { z } from 'zod';
-import { useQuery } from '@apollo/client';
 
 import {
   Table,
@@ -25,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { GET_TASKS } from '@/app/api/graphql/query';
+import { useGetTasksQuery } from '@/app/api/graphql/__generated__/hooks';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
 import { columns } from './columns';
@@ -41,17 +40,16 @@ export function DataTable() {
     pageIndex: 0,
     pageSize: PAGE_SIZES[0],
   });
-  const { data, loading } = useQuery(GET_TASKS, {
+  const { data, loading } = useGetTasksQuery({
     variables: {
       limit: pagination.pageSize,
       offset: pagination.pageIndex * pagination.pageSize,
     },
   });
-
   const defaultData = useMemo(() => [], []);
   const tasks = loading
     ? defaultData
-    : z.array(taskSchema).parse(data.tasks.items) || defaultData;
+    : z.array(taskSchema).parse(data?.tasks?.items) || defaultData;
 
   const table = useReactTable({
     data: tasks,
