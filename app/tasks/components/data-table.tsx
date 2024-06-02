@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, SetStateAction } from 'react';
 import {
   ColumnFiltersState,
   SortingState,
@@ -10,7 +10,6 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getSortedRowModel,
   useReactTable,
   PaginationState,
 } from '@tanstack/react-table';
@@ -25,11 +24,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useGetTasksQuery } from '@/app/api/graphql/__generated__/hooks';
+import { Sort, Order } from '@/app/api/graphql/__generated__/types';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
 import { columns } from './columns';
 import { taskSchema } from '../data/schema';
 import { PAGE_SIZES } from './constants';
+import { mapEnum } from './utils';
 
 export function DataTable() {
   const [rowSelection, setRowSelection] = useState({});
@@ -40,10 +41,13 @@ export function DataTable() {
     pageIndex: 0,
     pageSize: PAGE_SIZES[0],
   });
+
   const { data, loading } = useGetTasksQuery({
     variables: {
       limit: pagination.pageSize,
       offset: pagination.pageIndex * pagination.pageSize,
+      sort: mapEnum(sorting[0]?.id, Sort),
+      order: mapEnum(sorting[0]?.desc ? Order.Desc : Order.Asc, Order),
     },
   });
   const defaultData = useMemo(() => [], []);
@@ -64,14 +68,18 @@ export function DataTable() {
     },
     enableRowSelection: true,
     manualPagination: true,
+    autoResetPageIndex: false,
+    manualSorting: true,
     onPaginationChange: setPagination,
+    onSortingChange: (updater) => {
+      setPagination((prevPagination) => ({ ...prevPagination, pageIndex: 0 }));
+      setSorting(updater);
+    },
     getCoreRowModel: getCoreRowModel(),
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
