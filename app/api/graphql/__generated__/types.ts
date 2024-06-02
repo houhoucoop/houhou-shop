@@ -29,7 +29,22 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createTask?: Maybe<Task>;
+  deleteTask?: Maybe<Task>;
   updateTask?: Maybe<Task>;
+};
+
+export type MutationCreateTaskArgs = {
+  id: Scalars['String']['input'];
+  label: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  priority: Scalars['String']['input'];
+  status: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type MutationDeleteTaskArgs = {
+  id: Scalars['String']['input'];
 };
 
 export type MutationUpdateTaskArgs = {
@@ -55,6 +70,7 @@ export type QueryTasksArgs = {
 };
 
 export enum Sort {
+  CreatedAt = 'created_at',
   Name = 'name',
   Priority = 'priority',
   Status = 'status',

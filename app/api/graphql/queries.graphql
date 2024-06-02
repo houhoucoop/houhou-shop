@@ -1,14 +1,38 @@
+fragment TaskFields on Task {
+  id
+  name
+  title
+  status
+  label
+  priority
+}
+
 query GetTasks($limit: Int!, $offset: Int!, $sort: Sort, $order: Order) {
   tasks(limit: $limit, offset: $offset, sort: $sort, order: $order) {
     items {
-      id
-      name
-      title
-      status
-      label
-      priority
+      ...TaskFields
     }
     totalCount
+  }
+}
+
+mutation CreateTask(
+  $id: String!
+  $name: String!
+  $title: String!
+  $status: String!
+  $label: String!
+  $priority: String!
+) {
+  createTask(
+    id: $id
+    name: $name
+    title: $title
+    status: $status
+    label: $label
+    priority: $priority
+  ) {
+    ...TaskFields
   }
 }
 
@@ -20,5 +44,11 @@ mutation UpdateTask($id: String!, $label: String!) {
     status
     label
     priority
+  }
+}
+
+mutation DeleteTask($id: String!) {
+  deleteTask(id: $id) {
+    ...TaskFields
   }
 }

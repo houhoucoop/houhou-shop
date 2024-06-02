@@ -27,7 +27,6 @@ import { Sort, Order } from '@/app/api/graphql/__generated__/types';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
 import { columns } from './columns';
-import { taskSchema } from '../data/schema';
 import { PAGE_SIZES } from './constants';
 import { mapEnum } from './utils';
 
@@ -35,13 +34,15 @@ export function DataTable() {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: Sort.CreatedAt, desc: true },
+  ]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: PAGE_SIZES[0],
   });
 
-  const { data, loading } = useGetTasksQuery({
+  const { data, loading, refetch } = useGetTasksQuery({
     variables: {
       limit: pagination.pageSize,
       offset: pagination.pageIndex * pagination.pageSize,
@@ -81,6 +82,11 @@ export function DataTable() {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const resetAll = () => {
+    setPagination({ pageIndex: 0, pageSize: PAGE_SIZES[0] });
+    setSorting([]);
+  };
+
   return (
     <div className="space-y-4">
       <DataTableToolbar table={table} />
@@ -113,10 +119,10 @@ export function DataTable() {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {flexRender(cell.column.columnDef.cell, {
+                        ...cell.getContext(),
+                        refetchGetTasks: refetch,
+                      })}
                     </TableCell>
                   ))}
                 </TableRow>

@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { Row } from '@tanstack/react-table';
+import { Row, Table } from '@tanstack/react-table';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,30 +20,54 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { labels } from '../data/data';
-import { useUpdateTaskMutation } from '@/app/api/graphql/__generated__/hooks';
+import {
+  useUpdateTaskMutation,
+  useCreateTaskMutation,
+  useDeleteTaskMutation,
+} from '@/app/api/graphql/__generated__/hooks';
+import { GetTasks } from '@/app/api/graphql/__generated__/documents';
+import { Task } from '@/app/api/graphql/__generated__/types';
+import { PAGE_SIZES } from './constants';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
-}
-
-interface RowType {
-  label: string;
-  id: string;
+  table: Table<TData>;
+  refetchGetTasks: (param: any) => void;
 }
 
 export function DataTableRowActions<TData>({
   row,
+  table,
+  refetchGetTasks,
 }: DataTableRowActionsProps<TData>) {
-  const { label, id } = (row.original as RowType) || {};
+  const { id, name, title, status, label, priority } =
+    (row.original as Task) || {};
 
   const [labelValue, setLabelValue] = useState(label);
-  const [updateTaskMutation] = useUpdateTaskMutation({
-    variables: { id, label },
+  const [createTaskMutation, { data, loading, error }] = useCreateTaskMutation({
+    onCompleted: () => {
+      refetchGetTasks({ offset: 0 });
+      table.setPageIndex(0);
+    },
+  });
+  const [updateTaskMutation] = useUpdateTaskMutation();
+  const [deleteTaskMutation] = useDeleteTaskMutation({
+    onCompleted: refetchGetTasks,
   });
 
-  const handleSetLabel = (nextLabel: string) => {
+  const handleLabelUpdate = (nextLabel: string) => {
     setLabelValue(nextLabel);
     updateTaskMutation({ variables: { id, label: nextLabel } });
+  };
+
+  const handleCopyClick = () => {
+    createTaskMutation({
+      variables: { id: uuidv4(), name, title, status, label, priority },
+    });
+  };
+
+  const handleDeleteClick = () => {
+    deleteTaskMutation({ variables: { id } });
   };
 
   return (
@@ -57,14 +82,16 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleCopyClick}>
+          Make a copy
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuRadioGroup
               value={label}
-              onValueChange={handleSetLabel}
+              onValueChange={handleLabelUpdate}
             >
               {labels.map((label) => (
                 <DropdownMenuRadioItem key={label.value} value={label.value}>
@@ -75,7 +102,7 @@ export function DataTableRowActions<TData>({
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDeleteClick}>
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>
