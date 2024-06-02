@@ -13,7 +13,6 @@ import {
   useReactTable,
   PaginationState,
 } from '@tanstack/react-table';
-import { z } from 'zod';
 
 import {
   Table,
@@ -51,9 +50,7 @@ export function DataTable() {
     },
   });
   const defaultData = useMemo(() => [], []);
-  const tasks = loading
-    ? defaultData
-    : z.array(taskSchema).parse(data?.tasks?.items) || defaultData;
+  const tasks = loading ? defaultData : data?.tasks?.items || defaultData;
 
   const table = useReactTable({
     data: tasks,

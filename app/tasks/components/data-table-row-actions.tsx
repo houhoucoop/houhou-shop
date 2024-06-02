@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Row } from '@tanstack/react-table';
 
@@ -17,18 +18,32 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
 import { labels } from '../data/data';
-import { taskSchema } from '../data/schema';
+import { useUpdateTaskMutation } from '@/app/api/graphql/__generated__/hooks';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }
 
+interface RowType {
+  label: string;
+  id: string;
+}
+
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original);
+  const { label, id } = (row.original as RowType) || {};
+
+  const [labelValue, setLabelValue] = useState(label);
+  const [updateTaskMutation] = useUpdateTaskMutation({
+    variables: { id, label },
+  });
+
+  const handleSetLabel = (nextLabel: string) => {
+    setLabelValue(nextLabel);
+    updateTaskMutation({ variables: { id, label: nextLabel } });
+  };
 
   return (
     <DropdownMenu>
@@ -42,14 +57,15 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
         <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
+            <DropdownMenuRadioGroup
+              value={label}
+              onValueChange={handleSetLabel}
+            >
               {labels.map((label) => (
                 <DropdownMenuRadioItem key={label.value} value={label.value}>
                   {label.label}

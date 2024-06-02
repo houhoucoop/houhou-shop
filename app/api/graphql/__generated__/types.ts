@@ -27,6 +27,16 @@ export type Scalars = {
   Float: { input: number; output: number };
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  updateTask?: Maybe<Task>;
+};
+
+export type MutationUpdateTaskArgs = {
+  id: Scalars['String']['input'];
+  label: Scalars['String']['input'];
+};
+
 export enum Order {
   Asc = 'asc',
   Desc = 'desc',
@@ -45,7 +55,7 @@ export type QueryTasksArgs = {
 };
 
 export enum Sort {
-  Id = 'id',
+  Name = 'name',
   Priority = 'priority',
   Status = 'status',
   Title = 'title',
@@ -55,6 +65,7 @@ export type Task = {
   __typename?: 'Task';
   id: Scalars['String']['output'];
   label: Scalars['String']['output'];
+  name: Scalars['String']['output'];
   priority: Scalars['String']['output'];
   status: Scalars['String']['output'];
   title: Scalars['String']['output'];

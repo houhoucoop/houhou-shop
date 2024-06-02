@@ -1,11 +1,11 @@
 import prisma from '@/lib/db';
-import { Resolvers } from './__generated__/resolvers-types';
+import { Sort, Order } from './__generated__/types';
 
 const resolvers = {
   Query: {
     tasks: async (
       _: any,
-      { limit = 10, offset = 0, sort = 'id', order = 'asc' },
+      { limit = 10, offset = 0, sort = Sort.Name, order = Order.Asc },
     ) => {
       const [items, totalCount] = await Promise.all([
         prisma.tasks.findMany({
@@ -17,6 +17,16 @@ const resolvers = {
       ]);
 
       return { items, totalCount };
+    },
+  },
+  Mutation: {
+    updateTask: async (_: any, { id, label }) => {
+      const updatedTask = await prisma.tasks.update({
+        where: { id },
+        data: { label },
+      });
+
+      return updatedTask;
     },
   },
 };

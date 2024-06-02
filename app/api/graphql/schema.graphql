@@ -4,14 +4,15 @@ enum Order {
 }
 
 enum Sort {
-  id
-  priority
-  status
+  name
   title
+  status
+  priority
 }
 
 type Task {
   id: String!
+  name: String!
   title: String!
   status: String!
   label: String!
@@ -25,4 +26,8 @@ type TaskResponse {
 
 type Query {
   tasks(limit: Int, offset: Int, sort: Sort, order: Order): TaskResponse!
+}
+
+type Mutation {
+  updateTask(id: String!, label: String!): Task
 }

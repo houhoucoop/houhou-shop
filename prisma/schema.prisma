@@ -8,9 +8,10 @@ datasource db {
 }
 
 model tasks {
-  id       String  @id @db.VarChar(20)
+  name     String? @db.VarChar(20)
   title    String?
   status   String? @db.VarChar(20)
   label    String? @db.VarChar(20)
   priority String? @db.VarChar(20)
+  id       String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
 }

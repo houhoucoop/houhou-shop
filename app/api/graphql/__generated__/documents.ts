@@ -5,12 +5,25 @@ export const GetTasks = gql`
     tasks(limit: $limit, offset: $offset, sort: $sort, order: $order) {
       items {
         id
+        name
         title
         status
         label
         priority
       }
       totalCount
+    }
+  }
+`;
+export const UpdateTask = gql`
+  mutation UpdateTask($id: String!, $label: String!) {
+    updateTask(id: $id, label: $label) {
+      id
+      name
+      title
+      status
+      label
+      priority
     }
   }
 `;
