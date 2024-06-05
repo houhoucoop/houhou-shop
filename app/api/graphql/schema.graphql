@@ -11,6 +11,10 @@ enum Sort {
   created_at
 }
 
+input Filter {
+  keyword: String
+}
+
 type Task {
   id: String!
   name: String!
@@ -26,7 +30,13 @@ type TaskResponse {
 }
 
 type Query {
-  tasks(limit: Int, offset: Int, sort: Sort, order: Order): TaskResponse!
+  tasks(
+    limit: Int
+    offset: Int
+    sort: Sort
+    order: Order
+    filter: Filter
+  ): TaskResponse!
 }
 
 type Mutation {

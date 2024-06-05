@@ -42,14 +42,21 @@ export function DataTable() {
     pageSize: PAGE_SIZES[0],
   });
 
+  const filter = columnFilters.reduce((acc, filter) => {
+    if (filter.id !== 'title') return acc;
+    return { keyword: filter.value };
+  }, {});
+
   const { data, loading, refetch } = useGetTasksQuery({
     variables: {
       limit: pagination.pageSize,
       offset: pagination.pageIndex * pagination.pageSize,
       sort: mapEnum(sorting[0]?.id, Sort),
       order: mapEnum(sorting[0]?.desc ? Order.Desc : Order.Asc, Order),
+      filter,
     },
   });
+
   const defaultData = useMemo(() => [], []);
   const tasks = loading ? defaultData : data?.tasks?.items || defaultData;
 
@@ -73,19 +80,17 @@ export function DataTable() {
       setPagination((prevPagination) => ({ ...prevPagination, pageIndex: 0 }));
       setSorting(updater);
     },
+    onColumnFiltersChange: (updater) => {
+      setPagination((prevPagination) => ({ ...prevPagination, pageIndex: 0 }));
+      setColumnFilters(updater);
+    },
     getCoreRowModel: getCoreRowModel(),
     onRowSelectionChange: setRowSelection,
-    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
-
-  const resetAll = () => {
-    setPagination({ pageIndex: 0, pageSize: PAGE_SIZES[0] });
-    setSorting([]);
-  };
 
   return (
     <div className="space-y-4">

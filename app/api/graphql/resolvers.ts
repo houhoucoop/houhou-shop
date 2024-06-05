@@ -1,18 +1,39 @@
+import { Prisma } from '@prisma/client';
 import prisma from '@/lib/db';
-import { Sort, Order, Task } from './__generated__/types';
-import { camelToSnake } from './utils';
+import { Sort, Order, Task, Filter } from './__generated__/types';
 
 const resolvers = {
   Query: {
     tasks: async (
       _: any,
-      { limit = 10, offset = 0, sort = Sort.CreatedAt, order = Order.Desc },
+      {
+        limit = 10,
+        offset = 0,
+        sort = Sort.CreatedAt,
+        order = Order.Desc,
+        filter = {},
+      },
     ) => {
+      const { keyword }: Filter = filter;
+      const where: Prisma.tasksWhereInput = {};
+
+      if (keyword) {
+        const keywords = keyword
+          .split(/[\s,]+/)
+          .map((k) => k.trim())
+          .filter((k) => k);
+
+        where.AND = keywords.map((k) => ({
+          OR: [{ title: { contains: k, mode: 'insensitive' } }],
+        }));
+      }
+
       const [items, totalCount] = await Promise.all([
         prisma.tasks.findMany({
           take: limit,
           skip: offset,
           orderBy: { [sort]: order },
+          where,
         }),
         prisma.tasks.count(),
       ]);

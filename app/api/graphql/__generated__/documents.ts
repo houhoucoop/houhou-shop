@@ -10,8 +10,20 @@ export const TaskFields = gql`
   }
 `;
 export const GetTasks = gql`
-  query GetTasks($limit: Int!, $offset: Int!, $sort: Sort, $order: Order) {
-    tasks(limit: $limit, offset: $offset, sort: $sort, order: $order) {
+  query GetTasks(
+    $limit: Int!
+    $offset: Int!
+    $sort: Sort
+    $order: Order
+    $filter: Filter
+  ) {
+    tasks(
+      limit: $limit
+      offset: $offset
+      sort: $sort
+      order: $order
+      filter: $filter
+    ) {
       items {
         ...TaskFields
       }

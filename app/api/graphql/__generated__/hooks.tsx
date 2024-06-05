@@ -18,6 +18,7 @@ export type GetTasksQueryVariables = Types.Exact<{
   offset: Types.Scalars['Int']['input'];
   sort?: Types.InputMaybe<Types.Sort>;
   order?: Types.InputMaybe<Types.Order>;
+  filter?: Types.InputMaybe<Types.Filter>;
 }>;
 
 export type GetTasksQuery = {
@@ -110,6 +111,7 @@ export type DeleteTaskMutation = {
  *      offset: // value for 'offset'
  *      sort: // value for 'sort'
  *      order: // value for 'order'
+ *      filter: // value for 'filter'
  *   },
  * });
  */

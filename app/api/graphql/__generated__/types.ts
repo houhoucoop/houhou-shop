@@ -27,6 +27,10 @@ export type Scalars = {
   Float: { input: number; output: number };
 };
 
+export type Filter = {
+  keyword?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createTask?: Maybe<Task>;
@@ -63,6 +67,7 @@ export type Query = {
 };
 
 export type QueryTasksArgs = {
+  filter?: InputMaybe<Filter>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   order?: InputMaybe<Order>;
