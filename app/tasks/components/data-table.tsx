@@ -47,7 +47,7 @@ export function DataTable() {
     return { keyword: filter.value };
   }, {});
 
-  const { data, loading, refetch } = useGetTasksQuery({
+  const { data, loading, refetch, error } = useGetTasksQuery({
     variables: {
       limit: pagination.pageSize,
       offset: pagination.pageIndex * pagination.pageSize,
@@ -91,6 +91,13 @@ export function DataTable() {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
+
+  const renderTableStatus = () => {
+    if (loading) return 'Loading...';
+    if (error?.networkError) return error.networkError.message;
+    if (error?.graphQLErrors?.length) return 'Internal server error.';
+    return 'No results.';
+  };
 
   return (
     <div className="space-y-4">
@@ -138,7 +145,7 @@ export function DataTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {renderTableStatus()}
                 </TableCell>
               </TableRow>
             )}

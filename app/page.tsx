@@ -11,8 +11,8 @@ const userQuery = gql`
 `;
 
 const Home = async () => {
-  const { data } = await getClient().query({ query: userQuery });
-  console.log('🚀🚀🚀 ~ Home ~ data:', data);
+  // const { data } = await getClient().query({ query: userQuery });
+  // console.log('🚀🚀🚀 ~ Home ~ data:', data);
 
   return <div>asd</div>;
 };
