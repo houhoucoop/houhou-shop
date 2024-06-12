@@ -25,9 +25,7 @@ import {
   useCreateTaskMutation,
   useDeleteTaskMutation,
 } from '@/app/api/graphql/__generated__/hooks';
-import { GetTasks } from '@/app/api/graphql/__generated__/documents';
 import { Task } from '@/app/api/graphql/__generated__/types';
-import { PAGE_SIZES } from './constants';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

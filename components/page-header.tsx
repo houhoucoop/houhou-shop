@@ -17,27 +17,29 @@ export default function PageHeader() {
     <header className="w-full border-b border-border/40">
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
-          <div className="mr-4 w-10">
-            <Image
-              src={logoImage}
-              style={{ objectFit: 'cover' }}
-              alt="Logo"
-              className="block dark:hidden"
-            />
+          <div className="mr-4 w-10 cursor-pointer">
+            <NextLink href="/" legacyBehavior passHref>
+              <Image
+                src={logoImage}
+                style={{ objectFit: 'cover' }}
+                alt="Logo"
+                className="block dark:hidden"
+              />
+            </NextLink>
           </div>
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NextLink href="/" legacyBehavior passHref>
+                <NextLink href="/tasks" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    README
+                    Tasks
                   </NavigationMenuLink>
                 </NextLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <NextLink href="/tasks" legacyBehavior passHref>
+                <NextLink href="/shortify" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Tasks
+                    Shortify
                   </NavigationMenuLink>
                 </NextLink>
               </NavigationMenuItem>
